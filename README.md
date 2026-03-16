@@ -44,7 +44,8 @@ Desarrollada con Google Apps Script y desplegada como aplicación web.
 ## 📷 Screenshots
 
 ### Main App
-![App](screenshots/app.png)
+<img width="802" height="716" alt="MainAppAmigo" src="https://github.com/user-attachments/assets/10fb6027-7999-4d2e-9c11-ef14ae513a9d" />
+
 
 ### Secret Reveal
 ![Reveal](screenshots/reveal.png)
