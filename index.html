@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family:Arial;
+background:#0b1120;
+color:white;
+padding:20px
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:12px
+}
+
+textarea,input{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:8px;
+background:#1f2937;
+color:white
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold
+}
+
+.btn-main{
+background:linear-gradient(90deg,#ff00cc,#3333ff)
+}
+
+.btn-green{
+background:#22c55e
+}
+
+.list{
+margin-top:10px
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🎁 Amigo Invisible</h1>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Nuevo sorteo</h2>
+
+<label>Nombre del sorteo</label>
+<input id="nombre" placeholder="Navidad 2026">
+
+<label>Participantes</label>
+
+<textarea id="participantes" rows="8" placeholder="Nombre;email;movil
+
+Ejemplo:
+Ana;ana@gmail.com;34600111222
+Luis;luis@hotmail.com;34600333444"></textarea>
+
+<div style="margin-top:12px">
+<label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+<input type="checkbox" id="mostrarAsignaciones" style="width:auto">
+<span>Mostrar asignaciones en pantalla</span>
+</label>
+</div>
+
+<button class="btn-main" onclick="crear()">✨ Crear sorteo</button>
+
+<button class="btn-green" onclick="asignar()">🎲 Generar asignaciones</button>
+
+<button class="btn-green" onclick="whatsapp()">📲 Links WhatsApp</button>
+
+<button class="btn-green" onclick="emails()">📧 Enviar Emails</button>
+
+<button class="btn-green" onclick="excel()">📊 Exportar Excel</button>
+
+</div>
+
+<div class="card">
+
+<h2>Resultado</h2>
+
+<div>
+<b>ID del sorteo</b>
+<div id="sorteoId">Aún no creado</div>
+</div>
+
+<h3>Asignaciones</h3>
+
+<ul id="listaAsignaciones" class="list">
+<li>No hay asignaciones</li>
+</ul>
+
+<h3>Links WhatsApp</h3>
+
+<ul id="listaWhatsapp" class="list"></ul>
+
+</div>
+
+</div>
+
+<script>
+
+let sorteoActual=null
+let asignacionesActuales=[]
+
+function parseParticipantes(txt){
+
+return txt.split("\n")
+.map(x=>x.trim())
+.filter(x=>x)
+.map(l=>{
+
+const p=l.split(";")
+
+return{
+nombre:p[0],
+email:p[1],
+telefono:p[2]||""
+}
+
+})
+
+}
+
+function crear(){
+
+const nombre=document.getElementById("nombre").value
+
+const participantes=parseParticipantes(
+document.getElementById("participantes").value
+)
+
+google.script.run
+.withSuccessHandler(function(res){
+
+sorteoActual=res
+
+document.getElementById("sorteoId").innerText=res.id
+
+})
+.crearSorteo(nombre,participantes)
+
+}
+
+function asignar(){
+
+google.script.run
+.withSuccessHandler(function(res){
+
+asignacionesActuales=res
+
+const mostrar=document.getElementById("mostrarAsignaciones").checked
+
+if(mostrar){
+
+let html=""
+
+res.forEach(a=>{
+html+=`<li><b>${a.de}</b> → ${a.para}</li>`
+})
+
+document.getElementById("listaAsignaciones").innerHTML=html
+
+}else{
+
+document.getElementById("listaAsignaciones").innerHTML=
+"<li>🔒 Asignaciones ocultas (usar links secretos)</li>"
+
+}
+
+})
+.generarAsignaciones(sorteoActual.id)
+
+}
+
+function whatsapp(){
+
+google.script.run
+.withSuccessHandler(function(res){
+
+let html=""
+
+res.forEach(a=>{
+
+html+=`
+<li>
+${a.nombre} -
+<a href="${a.url}" target="_blank">abrir enlace</a>
+</li>
+`
+
+})
+
+document.getElementById("listaWhatsapp").innerHTML=html
+
+})
+.generarLinksWhatsapp(sorteoActual.id)
+
+}
+
+function emails(){
+
+google.script.run
+.withSuccessHandler(function(msg){
+
+alert(msg)
+
+})
+.enviarEmails(sorteoActual.id)
+
+}
+
+function excel(){
+
+google.script.run
+.withSuccessHandler(function(url){
+
+window.open(url)
+
+})
+.exportarExcel(sorteoActual.id)
+
+}
+
+</script>
+
+</body>
+</html>
