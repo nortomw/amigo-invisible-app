@@ -4,7 +4,7 @@ A web application to organize **Secret Santa / Amigo Invisible** gift exchanges 
 Built using **Google Apps Script** and deployed as a web application.
 
 Aplicación web para organizar sorteos de Amigo Invisible con enlaces secretos.
-Desarrollada con **Google Apps Script** y desplegada como aplicación web.
+Desarrollada con Google Apps Script y desplegada como aplicación web.
 
 ---
 
